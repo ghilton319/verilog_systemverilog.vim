@@ -191,4 +191,34 @@ device d1 (
 
 endmodule
 
+module m2(interface ifc);
+logic drive_busy, next_drive_busy;
+always_comb begin
+    ifc.next = ifc.current;
+    unique case(1'b1)
+	ifc.current==IDLE : if (ifc.start) ifc.next = START;
+	ifc.current==START : begin 
+	    priority if (~ifc.rst_n) ifc.next = IDLE;
+	    else if (~ifc.busy_n) ifc.next = RUN;
+	end
+	ifc.current==RUN: begin
+	    next_drive_busy = 1'b1;
+	    if (ifc.stop) ifc.next = STOP;
+	end
+	ifc.current==STOP: begin
+	    unique0 if (~ifc.rest_n) begin
+		ifc.next = IDLE;
+	    end
+	    else if (ifc.start) ifc.next = RUN;
+	end
+    endcase
+end
+
+for(genvar i=$right(ifc.bus);i<$left(ifc.bus);i=i*(i+1)) begi
+    always_comb if(i%2==1) ifc.bus[i+:i] ifc.bus2[i-:i];
+    always_comb if(i%2==0) ifc.bus3[i-:i] ifc.bus[i+:i];
+end
+
+endmodule
+
 // vim: set sts=4 sw=4 nofen:
