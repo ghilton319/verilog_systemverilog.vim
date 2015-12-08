@@ -96,9 +96,9 @@ function GetVerilog_SystemVerilogIndent()
     endif
 
   " Indent after if/else/for/case/always/initial/specify/fork blocks
-  elseif last_line =~ '^\s*\(`\@<!\<\(\(unique0\? \|priority \)\?if\|else\)\>\)' ||
-    \ last_line =~ '^\s*\<\(for\|while\|\(unique0\? \|priority \)\?case\%[[zx]]\|do\|foreach\|randcase\)\>' ||
-    \ last_line =~ '^\s*\<\(always\(_comb\|_ff\|_latch\)\?\)\>' ||
+  if  last_line =~ '^\s*\(`\@<!\<\(\(unique0\?\s\+\|priority\s\+\)\?if\|else\)\>\)' ||
+    \ last_line =~ '^\s*\<\(for\|while\|\(unique0\?\s\+\|priority\s\+\)\?case\%[[zx]]\|do\|foreach\|randcase\)\>' ||
+    \ last_line =~ '^\s*\<\(always\|always_comb\|always_ff\|always_latch\)\>' ||
     \ last_line =~ '^\s*\<\(initial\|specify\|fork\|final\)\>' ||
     \ last_line =~ '^\s*\(\w\+\s*:\s*\)\?\<\(assert\|assume\|cover\)\>'
     if last_line !~ '\(;\|\<end\>\)\s*' . vlog_comment . '*$' ||
@@ -111,7 +111,8 @@ function GetVerilog_SystemVerilogIndent()
     endif
   " Indent after function/task/class/package/sequence/clocking/
   " interface/covergroup/property/program blocks
-  elseif last_line =~ '^\s*\(\(pure\s\+\)\?\(virtual\|static\)\s\+\)\?\<\(function\|task\|class\|package\)\>' ||
+  elseif last_line =~ '^\s*\(\<\(virtual\|static\|protected\|local\)\>\s\+\)*\<\(function\|task\)\>' ||
+    \ last_line =~ '^\s*\(\<virtual\>\s\+\)\?\<\(class\|package\)\>' ||
     \ last_line =~ '^\s*\<\(sequence\|clocking\|interface\)\>' ||
     \ last_line =~ '^\s*\(\w\+\s*:\)\=\s*\<covergroup\>' ||
     \ last_line =~ '^\s*\<\(property\|program\)\>'
